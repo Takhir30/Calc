@@ -13,11 +13,11 @@ def calc(num):
     else:
         if len(num) > 1:
 
-            if '*' in num:
-                return(mult(num))
+            if '/' in num:
+                return(div(num))
             else:
-                if '/' in num:
-                    return(div(num))
+                if '*' in num:
+                    return(mult(num))
                 else:
                     if '-' in num:
                         return(sub(num))
