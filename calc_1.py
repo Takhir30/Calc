@@ -8,7 +8,7 @@ def calc(expr):
                    '*':mult, '-':sub, '+':add}
     if len(expr) > 1:
         for i in ['sin','cos','/','*','-','+']:
-            if type(expr) is str:
+            if isinstance(expr,str):
                 if i in expr and i not in '/*-+':
                     return math_action[i](expr)
                 if expr == "ZeroDivisionError" :
