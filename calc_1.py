@@ -1,88 +1,110 @@
-import argparse,math
+import argparse
+import math
 
-def calc(num):
-    if "sin" in num:
-        return(calc(sinus(num)))
-    if "cos" in num:
-        return(calc(cosinus(num)))
-    if type(num) is str:
-        if num == "ZeroDivisionError" :
+
+def calc(expr):
+# как сделать, чтобы этот код работал 
+# math_action = {'sin':sinus(expr), "cos":cosinus(expr), '/':div(expr),
+#                '*':mult(expr), '-':div(expr), '+':add(expr)}
+# if len(expr) > 1:
+#     for i in ['sin','cos','/','*','-','+']:
+#         if type(expr) is str:
+#             if i in expr and i not in '/*-+':
+#                 return math_action[i]
+#             if expr == "ZeroDivisionError" :
+#                 return ("ZeroDivisionError!!! Try again!")
+#             else:
+#                 return str_to_list(expr)
+#         else:
+#             return math_action[i]
+
+    if type(expr) is str:
+        if expr == "ZeroDivisionError" :
             return ("ZeroDivisionError!!! Try again!")
+        elif "sin" in expr:
+            return sinus(expr)
+        elif "cos" in expr:
+            return cosinus(expr)
         else:
-            return(calc(str_to_list(num)))
+            return str_to_list(expr)
     else:
-        if len(num) > 1:
-
-            if '/' in num:
-                return(div(num))
+        if len(expr) > 1:
+            if '/' in expr:
+                return div(expr)
             else:
-                if '*' in num:
-                    return(mult(num))
+                if '*' in expr:
+                    return mult(expr)
                 else:
-                    if '-' in num:
-                        return(sub(num))
+                    if '-' in expr:
+                        return sub(expr)
                     else:
-                        if '+' in num:
-                            return(add(num))
+                        if '+' in expr:
+                            return add(expr)
         else:
-            return ("%.2f" % float(num[0]))
+            return ("%.2f" % float(expr[0]))
+
 
 def str_to_list(expr_str):
     expr_list = ''
     for i in expr_str:
-        if i.isdigit() :
-            expr_list += i
-        elif i == '-' :
+        if i in '+/*-' :
             expr_list += ',' + i + ','
-        elif i == '+':
-            expr_list += ',' + i + ','
-        elif i == '/':
-            expr_list += ',' + i + ','
-        elif i == '*':
-            expr_list += ',' + i + ','
-        elif i.isalpha:
+        else:
             expr_list += i
     expr_list = expr_list.split(',')
-    return(expr_list)
+    return calc(expr_list)
+
 
 def sinus(expr_str):
     b = ''
     for i in expr_str[expr_str.find('sin'):]:
-        if i != '-' and i != '+' and i != '/' and i != '*':
+        if i not in '+-/*':
             if i.isdigit or i == '.' or i.isalpa:
                 b += i
-        else: break
-    new_expr_str = expr_str.replace('sin' + b[3:],str(round(math.sin(int(b[3:])*math.pi/180),2)))
-    return (new_expr_str)
+        else:
+            break
+    new_expr_str = expr_str.replace('sin' + b[3:], str(round(math.sin(int(b[3:]) * math.pi/180), 2)))
+    return calc(new_expr_str)
+
 
 def cosinus(expr_str):
     b = ''
     for i in expr_str[expr_str.find('cos'):]:
-        if i != '-' and i != '+' and i != '/' and i != '*':
+        if i not in '+-/*':
             if i.isdigit or i == '.' or i.isalpa:
                 b += i
-        else: break
-    new_expr_str = expr_str.replace('cos' + b[3:],str(round(math.sin(int(b[3:])*math.pi/180),2)))
-    return (new_expr_str)
+        else:
+            break
+    new_expr_str = expr_str.replace('cos' + b[3:], str(round(math.sin(int(b[3:]) * math.pi / 180), 2)))
+    return calc(new_expr_str)
+
 
 def add(expr_list):
-    expr_list[expr_list.index('+')-1:expr_list.index('+')+1+1] = [str(float(expr_list[expr_list.index('+')-1]) + float(expr_list[expr_list.index('+')+1]))]
-    return (calc(expr_list))
+    plus = expr_list.index('+')
+    expr_list[plus - 1:plus + 2] = [str(float(expr_list[plus - 1]) + float(expr_list[plus + 1]))]
+    return calc(expr_list)
+
 
 def sub(expr_list):
-    expr_list[expr_list.index('-')-1:expr_list.index('-')+1+1] = [str(float(expr_list[expr_list.index('-')-1]) - float(expr_list[expr_list.index('-')+1]))]
+    minus = expr_list.index('-')
+    expr_list[minus - 1:minus + 2] = [str(float(expr_list[minus - 1]) - float(expr_list[minus + 1]))]
     return (calc(expr_list))
+
 
 def div(expr_list):
-    if float(expr_list[expr_list.index('/')+1]) != 0:
-        expr_list[expr_list.index('/')-1:expr_list.index('/')+1+1] = [str(float(expr_list[expr_list.index('/')-1]) / float(expr_list[expr_list.index('/')+1]))]
-        return (calc(expr_list))
+    slash = expr_list.index('/')
+    if float(expr_list[slash + 1]) != 0:
+        expr_list[slash - 1:slash + 2] = [str(float(expr_list[slash - 1]) / float(expr_list[slash + 1]))]
+        return calc(expr_list)
     else:
-        return (calc("ZeroDivisionError"))
+        return calc("ZeroDivisionError")
+
 
 def mult(expr_list):
-    expr_list[expr_list.index('*')-1:expr_list.index('*')+1+1] = [str(float(expr_list[expr_list.index('*')-1]) * float(expr_list[expr_list.index('*')+1]))]
-    return (calc(expr_list))
+    star = expr_list.index('*')
+    expr_list[star - 1:star + 2] = [str(float(expr_list[star - 1]) * float(expr_list[star + 1]))]
+    return calc(expr_list)
+
 
 def fileoption():
     with open('text.txt') as line:
