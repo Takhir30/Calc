@@ -3,46 +3,23 @@ import math
 
 
 def calc(expr):
-# как сделать, чтобы этот код работал 
-# math_action = {'sin':sinus(expr), "cos":cosinus(expr), '/':div(expr),
-#                '*':mult(expr), '-':div(expr), '+':add(expr)}
-# if len(expr) > 1:
-#     for i in ['sin','cos','/','*','-','+']:
-#         if type(expr) is str:
-#             if i in expr and i not in '/*-+':
-#                 return math_action[i]
-#             if expr == "ZeroDivisionError" :
-#                 return ("ZeroDivisionError!!! Try again!")
-#             else:
-#                 return str_to_list(expr)
-#         else:
-#             if i in expr:
-#                 return math_action[i]
 
-    if type(expr) is str:
-        if expr == "ZeroDivisionError" :
-            return ("ZeroDivisionError!!! Try again!")
-        elif "sin" in expr:
-            return sinus(expr)
-        elif "cos" in expr:
-            return cosinus(expr)
-        else:
-            return str_to_list(expr)
-    else:
-        if len(expr) > 1:
-            if '/' in expr:
-                return div(expr)
-            else:
-                if '*' in expr:
-                    return mult(expr)
+    math_action = {'sin':sinus, "cos":cosinus, '/':div,
+                   '*':mult, '-':sub, '+':add}
+    if len(expr) > 1:
+        for i in ['sin','cos','/','*','-','+']:
+            if type(expr) is str:
+                if i in expr and i not in '/*-+':
+                    return math_action[i](expr)
+                if expr == "ZeroDivisionError" :
+                    return ("ZeroDivisionError!!! Try again!")
                 else:
-                    if '-' in expr:
-                        return sub(expr)
-                    else:
-                        if '+' in expr:
-                            return add(expr)
-        else:
-            return ("%.2f" % float(expr[0]))
+                    return str_to_list(expr)
+            else:
+                if i in expr:
+                    return math_action[i](expr)
+    else:
+        return ("%.2f" % float(expr[0]))
 
 
 def str_to_list(expr_str):
