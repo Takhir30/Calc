@@ -16,7 +16,8 @@ def calc(expr):
 #             else:
 #                 return str_to_list(expr)
 #         else:
-#             return math_action[i]
+#             if i in expr:
+#                 return math_action[i]
 
     if type(expr) is str:
         if expr == "ZeroDivisionError" :
