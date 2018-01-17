@@ -3,22 +3,13 @@ import math
 
 
 def calc(expr):
-    try:
-        math_action = {'sin': trigonometry,
-                       'cos': trigonometry,
-                       '/': div,
-                       '*': mult,
-                       '-': sub,
-                       '+': add}
-        for i in ['sin', 'cos', '/', '*', '-', '+']:
-            if i in expr:
-                return math_action[i](i,expr)
-        return "%.2f" % float(expr)
-    except ZeroDivisionError:
-        print("Division by zero!")
+    for i in ['sin', 'cos', '/', '*', '-', '+']:
+        if i in expr:
+            return action(i, expr)
+    return "%.2f" % float(expr)
 
 
-def a_num(sign, expr):
+def left_num(sign, expr):
     a = ''
     a_index = expr.find(sign)
     for i in expr[a_index-1::-1]:
@@ -30,7 +21,7 @@ def a_num(sign, expr):
     return float(a[::-1]), a_index
 
 
-def b_num(sign, expr):
+def right_num(sign, expr):
     b = ''
     b_index = expr.find(sign)
     for i in expr[b_index + 1:]:
@@ -42,22 +33,30 @@ def b_num(sign, expr):
     return float(b), b_index + 1
 
 
-def data_num(sign,expr):
-    a, a_index = a_num(sign, expr)
-    b, b_index = b_num(sign, expr)
-    return a, a_index, b, b_index
+def action(sign, expr):
+    math_action = {'sin': trigonometry,
+                   'cos': trigonometry,
+                   '/': div,
+                   '*': mult,
+                   '-': sub,
+                   '+': add}
+    if sign in '/*-+':
+        a, a_index = left_num(sign, expr)
+        b, b_index = right_num(sign, expr)
+        new_expr = expr.replace(expr[a_index:b_index], math_action[sign](a, b))
+        return calc(new_expr)
+    else:
+        trigonometry(sign, expr)
 
 
 def trigonometry(tr_sign, expr):
     b = ''
-    for i in expr[expr.find(tr_sign):]:
-        if i not in '+-/*':
-            if i.isdigit() or i == '.' or i.isalpa():
-                b += i
-        else:
-            break
-    trig = tr_sign + b[3:]
-    rad_to_degree = int(b[3:]) * math.pi/180
+    trig_index = expr.find(tr_sign) + 3
+    for i in expr[trig_index:]:
+        if i.isdigit() or i == '.':
+            b += i
+    trig = sign + b
+    rad_to_degree = int(b) * math.pi / 180
     if tr_sign == 'sin':
         new_expr = expr.replace(trig, str(math.sin(rad_to_degree)))
     else:
@@ -65,28 +64,23 @@ def trigonometry(tr_sign, expr):
     return calc(new_expr)
 
 
-def add(sign,expr):
-    a, a_index, b, b_index = data_num(sign,expr)
-    new_expr = expr.replace(expr[a_index:b_index],str(a+b))
-    return calc(new_expr)
+def add(a, b):
+    return a + b
 
 
-def sub(sign,expr):
-    a, a_index, b, b_index = data_num(sign,expr)
-    new_expr = expr.replace(expr[a_index:b_index],str(a-b))
-    return calc(new_expr)
+def sub(a, b):
+    return a - b
 
 
-def div(sign,expr):
-    a, a_index, b, b_index = data_num(sign,expr)
-    new_expr = expr.replace(expr[a_index:b_index],str(a/b))
-    return calc(new_expr)
+def mult(a, b):
+    return a * b
 
 
-def mult(sign,expr):
-    a, a_index, b, b_index = data_num(sign, expr)
-    new_expr = expr.replace(expr[a_index:b_index],str(a*b))
-    return calc(new_expr)
+def div(a, b):
+    try:
+        return a / b
+    except ZeroDivisionError:
+        return("ZeroDivisionError")
 
 
 def fileoption():
