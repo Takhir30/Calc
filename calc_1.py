@@ -3,97 +3,102 @@ import math
 
 
 def calc(expr):
-
-    math_action = {'sin':sinus, "cos":cosinus, '/':div,
-                   '*':mult, '-':sub, '+':add}
-    if len(expr) > 1:
-        for i in ['sin','cos','/','*','-','+']:
-            if isinstance(expr,str):
-                if i in expr and i not in '/*-+':
-                    return math_action[i](expr)
-                if expr == "ZeroDivisionError" :
-                    return ("ZeroDivisionError!!! Try again!")
-                else:
-                    return str_to_list(expr)
-            else:
-                if i in expr:
-                    return math_action[i](expr)
-    else:
-        return ("%.2f" % float(expr[0]))
+    try:
+        math_action = {'sin': trigonometry,
+                       'cos': trigonometry,
+                       '/': div,
+                       '*': mult,
+                       '-': sub,
+                       '+': add}
+        for i in ['sin', 'cos', '/', '*', '-', '+']:
+            if i in expr:
+                return math_action[i](i,expr)
+        return "%.2f" % float(expr)
+    except ZeroDivisionError:
+        print("Division by zero!")
 
 
-def str_to_list(expr_str):
-    expr_list = ''
-    for i in expr_str:
-        if i in '+/*-' :
-            expr_list += ',' + i + ','
+def a_num(sign, expr):
+    a = ''
+    a_index = expr.find(sign)
+    for i in expr[a_index-1::-1]:
+        if i.isdigit() or i == '.':
+            a += i
+            a_index -= 1
         else:
-            expr_list += i
-    expr_list = expr_list.split(',')
-    return calc(expr_list)
+            break
+    return float(a[::-1]), a_index
 
 
-def sinus(expr_str):
+def b_num(sign, expr):
     b = ''
-    for i in expr_str[expr_str.find('sin'):]:
+    b_index = expr.find(sign)
+    for i in expr[b_index + 1:]:
+        if i.isdigit() or i == '.':
+            b += i
+            b_index += 1
+        else:
+            break
+    return float(b), b_index + 1
+
+
+def data_num(sign,expr):
+    a, a_index = a_num(sign, expr)
+    b, b_index = b_num(sign, expr)
+    return a, a_index, b, b_index
+
+
+def trigonometry(tr_sign, expr):
+    b = ''
+    for i in expr[expr.find(tr_sign):]:
         if i not in '+-/*':
-            if i.isdigit or i == '.' or i.isalpa:
+            if i.isdigit() or i == '.' or i.isalpa():
                 b += i
         else:
             break
-    new_expr_str = expr_str.replace('sin' + b[3:], str(round(math.sin(int(b[3:]) * math.pi/180), 2)))
-    return calc(new_expr_str)
-
-
-def cosinus(expr_str):
-    b = ''
-    for i in expr_str[expr_str.find('cos'):]:
-        if i not in '+-/*':
-            if i.isdigit or i == '.' or i.isalpa:
-                b += i
-        else:
-            break
-    new_expr_str = expr_str.replace('cos' + b[3:], str(round(math.sin(int(b[3:]) * math.pi / 180), 2)))
-    return calc(new_expr_str)
-
-
-def add(expr_list):
-    plus = expr_list.index('+')
-    expr_list[plus - 1:plus + 2] = [str(float(expr_list[plus - 1]) + float(expr_list[plus + 1]))]
-    return calc(expr_list)
-
-
-def sub(expr_list):
-    minus = expr_list.index('-')
-    expr_list[minus - 1:minus + 2] = [str(float(expr_list[minus - 1]) - float(expr_list[minus + 1]))]
-    return (calc(expr_list))
-
-
-def div(expr_list):
-    slash = expr_list.index('/')
-    if float(expr_list[slash + 1]) != 0:
-        expr_list[slash - 1:slash + 2] = [str(float(expr_list[slash - 1]) / float(expr_list[slash + 1]))]
-        return calc(expr_list)
+    trig = tr_sign + b[3:]
+    rad_to_degree = int(b[3:]) * math.pi/180
+    if tr_sign == 'sin':
+        new_expr = expr.replace(trig, str(math.sin(rad_to_degree)))
     else:
-        return calc("ZeroDivisionError")
+        new_expr = expr.replace(trig, str(math.cos(rad_to_degree)))
+    return calc(new_expr)
 
 
-def mult(expr_list):
-    star = expr_list.index('*')
-    expr_list[star - 1:star + 2] = [str(float(expr_list[star - 1]) * float(expr_list[star + 1]))]
-    return calc(expr_list)
+def add(sign,expr):
+    a, a_index, b, b_index = data_num(sign,expr)
+    new_expr = expr.replace(expr[a_index:b_index],str(a+b))
+    return calc(new_expr)
+
+
+def sub(sign,expr):
+    a, a_index, b, b_index = data_num(sign,expr)
+    new_expr = expr.replace(expr[a_index:b_index],str(a-b))
+    return calc(new_expr)
+
+
+def div(sign,expr):
+    a, a_index, b, b_index = data_num(sign,expr)
+    new_expr = expr.replace(expr[a_index:b_index],str(a/b))
+    return calc(new_expr)
+
+
+def mult(sign,expr):
+    a, a_index, b, b_index = data_num(sign, expr)
+    new_expr = expr.replace(expr[a_index:b_index],str(a*b))
+    return calc(new_expr)
 
 
 def fileoption():
     with open('text.txt') as line:
         num = line.readline().strip()
         b = calc(num)
-    with open(input(),'a+') as new_line:
+    with open(input("Type here the name of the file:  "), 'a+') as new_line:
         new_line.write(num + '\t')
         new_line.write(b)
 
 
-def Main():
+def main():
     parser = argparse.ArgumentParser()
 
     parser.add_argument("-cl", "--calculate" , action='store_true')
@@ -110,4 +115,4 @@ def Main():
 
 
 if __name__ == '__main__':
-    Main()
+    main()
