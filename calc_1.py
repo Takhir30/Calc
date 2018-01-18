@@ -5,7 +5,7 @@ import math
 def calc(expr):
     try:
         num = float(expr)
-        return "%.2f" % float(expr)
+        return  num
     except ValueError:
         for symbol in ['+', '-', '*', '/']:
             if symbol in expr:
