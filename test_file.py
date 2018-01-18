@@ -1,11 +1,10 @@
-import pytest,calc_3
+import pytest,calc_1
 
 def test_result():
-    assert calc_3.calc('2*3/2*100') == '300.00'
+    assert calc_1.calc('2*3/2*100') == 300.0
 
-def test_div_by_zero():
-    assert calc_3.calc('2/0') == "ZeroDivisionError!!! Try again!"
+def test_result_1():
+    assert calc_1.calc('2*3/6-7') == -6.0
 
-def test_div_by_zero_part():
-    if calc_3.calc ('2/0'):
-        assert calc_3.div(['2','/','0']) == calc_3.calc("ZeroDivisionError")
+def test_result_2():
+    assert calc_1.calc('12/6-2*9/3') == -4.0
