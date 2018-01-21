@@ -2,19 +2,47 @@ import argparse
 import math
 
 
+def check(expr):
+    expr = expr.replace(' ','')    #удаляем пробелы
+    for i in ['cos', 'sin']:
+        if i in expr:
+            expr = expr.replace(i,'')
+    for i in expr:
+        if i not in '123456789.()+-*/':
+            return 'Wrong input!!! You may use only "123456789.()+-*/" symbols! Try again!'
+    return calc(expr)
+
+
 def calc(expr):
     try:
-        num = float(expr)
-        return  num
+        return  float('%.2f' % float(expr))
     except ValueError:
-        for symbol in ['+', '-', '*', '/']:
+        for symbol in ['(', '+-', '--', '*-', '/-', '+', '-', '*', '/']:
             if symbol in expr:
-                symbol_index = expr.find(symbol)
-                left_expr = expr[:symbol_index]
-                right_expr = expr[symbol_index+1:]
-                return math_action(left_expr, right_expr, symbol)
+                if symbol == '(':
+                    return paren(expr)
+                else:
+                    symbol_index = expr.rfind(symbol)
+                    if symbol_index == 0:
+                        return calc('0' + expr)
+                    left_expr = expr[:symbol_index]
+                    right_expr = expr[symbol_index + 1:]
+                    return math_action(left_expr, right_expr, symbol[0])
         if 'sin' in expr or 'cos' in expr:
                 return calc(trigonometry(expr))
+
+
+def paren(expr):        #parenthesis
+    i_index = 0
+    for i in expr:
+        if i == '(':
+            left_index = i_index
+        if i == ')':
+            right_index = i_index
+            break
+        i_index += 1
+    new_expr = expr.replace(expr[left_index:right_index + 1], str(calc(expr[left_index + 1:right_index])))
+    return calc(new_expr)
 
 
 def math_action(left_expr, right_expr, symbol):
@@ -36,7 +64,7 @@ def trigonometry(expr):
 def fileoption():
     with open('text.txt') as line:
         num = line.readline().strip()
-        b = calc(num)
+        b = check(num)
     with open(input("Type here the name of the file:  "), 'a+') as new_line:
         new_line.write(num + '\t')
         new_line.write(b)
@@ -50,12 +78,12 @@ def main():
     parser.add_argument("-kb", "--keyboard", type = str)
     args = parser.parse_args()
     if args.keyboard:
-        print(calc(args.keyboard))
+        print(check(args.keyboard))
     elif args.fileoption:
         fileoption()
         print("New file!!")
     else:
-        print(calc('1+1'))
+        print(check('1+1'))
 
 
 if __name__ == '__main__':
