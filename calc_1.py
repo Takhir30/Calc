@@ -2,14 +2,17 @@ import argparse
 import math
 
 
+symbols = "1234567890.()+-*/"
+
+
 def check(expr):
-    expr = expr.replace(' ','')    #удаляем пробелы
+    expr = expr.replace(' ', '')    #Removing some extra space's
     for i in ['cos', 'sin']:
         if i in expr:
-            expr = expr.replace(i,'')
-    for i in expr:
-        if i not in '123456789.()+-*/':
-            return 'Wrong input!!! You may use only "123456789.()+-*/" symbols! Try again!'
+            new_expr = expr.replace(i, '')
+    for i in new_expr:
+        if i not in symbols:
+            return 'Wrong input!!! You may use only %s symbols! Try again!' % (symbols)
     return calc(expr)
 
 
@@ -17,7 +20,7 @@ def calc(expr):
     try:
         return  float('%.2f' % float(expr))
     except ValueError:
-        for symbol in ['(', '+-', '--', '*-', '/-', '+', '-', '*', '/']:
+        for symbol in ['(', '+-', '--', '+', '-', '*-', '/-', '*', '/']:
             if symbol in expr:
                 if symbol == '(':
                     return paren(expr)
