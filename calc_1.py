@@ -97,7 +97,7 @@ def trigonometry(expr):
 def fileoption():
     with open('text.txt') as line:
         num = line.readline().strip()
-        b = calc(num)
+        b = check(num)
     with open(input("Type here the name of the file:  "), 'a+') as new_line:
         new_line.write(num + '\t')
         new_line.write(b)
@@ -111,12 +111,12 @@ def main():
     parser.add_argument("-kb", "--keyboard", type = str)
     args = parser.parse_args()
     if args.keyboard:
-        print(calc(args.keyboard))
+        print(check(args.keyboard))
     elif args.fileoption:
         fileoption()
         print("New file!!")
     else:
-        print(calc('1+1'))
+        print(check('1+1'))
 
 
 if __name__ == '__main__':
