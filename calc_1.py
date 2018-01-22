@@ -10,6 +10,8 @@ def check(expr):
     for i in ['cos', 'sin']:
         if i in expr:
             new_expr = expr.replace(i, '')
+        else:
+            new_expr = expr
     for i in new_expr:
         if i not in symbols:
             return 'Wrong input!!! You may use only %s symbols! Try again!' % (symbols)
@@ -20,7 +22,7 @@ def calc(expr):
     try:
         return  float('%.2f' % float(expr))
     except ValueError:
-        for symbol in ['(', '+-', '--', '+', '-', '*-', '/-', '*', '/']:
+        for symbol in ['(', '+-', '--', '*-', '/-', '+', '-', '*', '/']:
             if symbol in expr:
                 if symbol == '(':
                     return paren(expr)
