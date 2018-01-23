@@ -7,8 +7,7 @@ symbols = "1234567890.()+-*/"
 
 
 def check(expr):
-    expr = expr.replace(' ', '')    #Removing some extra space's
-    if re.fullmatch(r'([0-9()/*\-+.]|cos|sin)+', expr):
+    if re.fullmatch(r'([0-9()/*\-+.\s]|cos|sin)+', expr):
         return str_to_list(expr)
     else:
         return 'Wrong input!!! You may use only %s symbols! Try again!' % (symbols)
@@ -73,9 +72,9 @@ def math_action(left_expr, right_expr, symbol):
 def trigonometry(expr):
     rad_to_degree = float(expr[0][3:]) * math.pi / 180
     if expr[0][:3] == 'sin':
-        return calc([str(math.sin(rad_to_degree))])
+        return calc([math.sin(rad_to_degree)])
     else:
-        return calc([str(math.sin(rad_to_degree))])
+        return calc([math.sin(rad_to_degree)])
 
 
 def fileoption():
