@@ -21,7 +21,7 @@ def str_to_list(expr_str):
             expr_list += ',' + i + ','
         else:
             expr_list += i
-    expr_list = expr_list.replace(',,',',').split(',')
+    expr_list = expr_list.replace(',,', ',').split(',')
     expr_list = list(filter(lambda x: x, expr_list))
     return calc(expr_list)
 
