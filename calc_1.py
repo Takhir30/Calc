@@ -1,5 +1,6 @@
 import argparse
 import math
+import re
 
 
 symbols = "1234567890.()+-*/"
@@ -7,29 +8,21 @@ symbols = "1234567890.()+-*/"
 
 def check(expr):
     expr = expr.replace(' ', '')    #Removing some extra space's
-    for i in ['cos', 'sin']:
-        if i in expr:
-            new_expr = expr.replace(i, '')
-        else:
-            new_expr = expr
-    for i in new_expr:
-        if i not in symbols:
-            return 'Wrong input!!! You may use only %s symbols! Try again!' % (symbols)
-    return str_to_list(expr)
-
+    if re.fullmatch(r'([0-9()/*\-+.]|cos|sin)+',expr):
+        return str_to_list(expr)
+    else:
+        return 'Wrong input!!! You may use only %s symbols! Try again!' % (symbols)
 
 
 def str_to_list(expr_str):
-    if 'sin' in expr_str or 'cos' in expr_str:
-            return trigonometry(expr_str)
     expr_list = ''
     for i in expr_str:
-        if i.isdigit() or i == '.':
+        if i.isdigit() or i == '.' or i.isalpha():
             expr_list += i
         elif i in '+-*/()' :
             expr_list += ',' + i + ','
     expr_list = expr_list.replace(',,',',').split(',')
-    expr_list = [x for x in expr_list if x]
+    expr_list = list(filter(lambda x: x, expr_list))
     return calc(expr_list)
 
 
@@ -37,7 +30,10 @@ def calc(expr):
     if expr[0] == '-':
         expr[0:2] = ['-' + expr[1]]
     if len(expr) == 1:
-        return  float('%.2f' % float(expr[0]))
+        try:
+            return float('%.2f' % float(expr[0]))
+        except ValueError:
+            return trigonometry(expr)
     else:
         if '(' in expr:
             return paren(expr)
@@ -51,7 +47,6 @@ def calc(expr):
                 left_expr = expr[:symbol_index]
                 right_expr = expr[symbol_index + 1:]
                 return math_action(left_expr, right_expr, symbol)
-
 
 
 def paren(expr):        #parenthesis
@@ -76,22 +71,11 @@ def math_action(left_expr, right_expr, symbol):
 
 
 def trigonometry(expr):
-    rad = ''
-    for i in ['sin', 'cos']:
-        if i in expr:
-            tr_l_index = expr.find(i)
-            for j in expr[tr_l_index + 3:]:
-                if j.isdigit() or j == '.':
-                    rad += j
-                else:
-                    break
-        rad_to_degree = float(rad) * math.pi / 180
-        tr_r_index = tr_l_index + 3 + len(rad)
-        if i == 'sin':
-            expr = expr.replace(expr[tr_l_index:tr_r_index], str(math.sin(rad_to_degree)))
-        else:
-            expr = expr.replace(expr[tr_l_index:tr_r_index], str(math.cos(rad_to_degree)))
-        return str_to_list(expr)
+    rad_to_degree = float(expr[0][3:]) * math.pi / 180
+    if expr[0][:3] == 'sin':
+        return calc([str(math.sin(rad_to_degree))])
+    else:
+        return calc([str(math.sin(rad_to_degree))])
 
 
 def fileoption():
