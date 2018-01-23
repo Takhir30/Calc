@@ -8,7 +8,7 @@ symbols = "1234567890.()+-*/"
 
 def check(expr):
     expr = expr.replace(' ', '')    #Removing some extra space's
-    if re.fullmatch(r'([0-9()/*\-+.]|cos|sin)+',expr):
+    if re.fullmatch(r'([0-9()/*\-+.]|cos|sin)+', expr):
         return str_to_list(expr)
     else:
         return 'Wrong input!!! You may use only %s symbols! Try again!' % (symbols)
