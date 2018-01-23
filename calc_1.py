@@ -17,10 +17,10 @@ def check(expr):
 def str_to_list(expr_str):
     expr_list = ''
     for i in expr_str:
-        if i.isdigit() or i == '.' or i.isalpha():
-            expr_list += i
-        elif i in '+-*/()' :
+        if i in '+-*/()' :
             expr_list += ',' + i + ','
+        else:
+            expr_list += i
     expr_list = expr_list.replace(',,',',').split(',')
     expr_list = list(filter(lambda x: x, expr_list))
     return calc(expr_list)
@@ -90,8 +90,8 @@ def fileoption():
 def main():
     parser = argparse.ArgumentParser()
 
-    parser.add_argument("-cl", "--calculate" , action='store_true')
-    parser.add_argument("-fo", "--fileoption" , action='store_true')
+    parser.add_argument("-cl", "--calculate", action='store_true')
+    parser.add_argument("-fo", "--fileoption", action='store_true')
     parser.add_argument("-kb", "--keyboard", type = str)
     args = parser.parse_args()
     if args.keyboard:
