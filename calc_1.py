@@ -1,68 +1,52 @@
 import argparse
-import math
-import re
+
+from re import findall, fullmatch
+from math import radians, sin, cos
 
 
-symbols = "1234567890.()+-*/"
+SYMBOLS = "1 2 3 4 5 6 7 8 9 0 . ( ) + - * / cos sin"
 
 
 # Cheking for correct input
 def check(expr):
-    if re.fullmatch(r'([0-9()/*\-+.\s]|cos|sin)+', expr):
-        return str_to_list(expr)
+    if fullmatch(r'([0-9()/*\-+.\s]|cos|sin)+', expr):
+        return re_magic(expr)
     else:
-        return 'Wrong input!!! You may use only %s symbols! Try again!' % (symbols)
+        return 'Wrong input!!! You may use only {} symbols! Try again!'.format(SYMBOLS)
 
 
-# Turning our expression from string to list
-def str_to_list(expr_str):
-    expr_list = ''
-    for i in expr_str:
-        if i in '+-*/()' :
-            expr_list += ',' + i + ','
-        else:
-            expr_list += i
-    expr_list = expr_list.replace(',,', ',').split(',')
-    expr_list = list(filter(lambda x: x, expr_list))
-    return calc(expr_list)
+# Using re lib to make things more easier
+def re_magic(expr):
+    if 'sin' or 'cos' in expr:
+        for i in findall(r'sin\d*|cos\d*',expr):
+            trig_to_num = trigonometry(i)
+            expr = expr.replace(i, trig_to_num)
+    if '(' in expr:
+        while '(' in expr:
+            for i in findall(r'\([^\(\)]*\)',expr):
+                open_par = calc(i)
+                expr = expr.replace(i, str(open_par))
+        return calc(expr)
+    else:
+        return calc(expr)
 
 
 # Calculating all expression
 def calc(expr):
-    if expr[0] == '-':
-        expr[0:2] = ['-' + expr[1]]
-    if len(expr) == 1:
-        try:
-            return float('%.2f' % float(expr[0]))
-        except ValueError:
-            return trigonometry(expr)
-    else:
+    try:
+        return float(expr)
+    except ValueError:
         if '(' in expr:
-            return paren(expr)
+            return calc(expr[1:-1])
         for symbol in ['+', '-', '*', '/']:
             if symbol in expr:
-                symbol_index = -1
-                for i in expr[-1::-1]:
-                    if i == symbol:
-                        break
-                    symbol_index -= 1
+                if symbol == '/':
+                    symbol_index = expr.rfind(symbol)
+                else:
+                    symbol_index = expr.find(symbol)
                 left_expr = expr[:symbol_index]
                 right_expr = expr[symbol_index + 1:]
                 return math_action(left_expr, right_expr, symbol)
-
-
-# Calculating expression in parenthesis
-def paren(expr):       
-    i_index = 0
-    for i in expr:
-        if i == '(':
-            left_index = i_index
-        if i == ')':
-            right_index = i_index
-            break
-        i_index += 1
-    expr[left_index:right_index + 1] = [calc(expr[left_index + 1:right_index])]
-    return calc(expr)
 
 
 # Pure math
@@ -76,11 +60,10 @@ def math_action(left_expr, right_expr, symbol):
 
 # Calculating sin and cos
 def trigonometry(expr):
-    rad_to_degree = float(expr[0][3:]) * math.pi / 180
-    if expr[0][:3] == 'sin':
-        return calc([math.sin(rad_to_degree)])
+    if expr[:3] == 'sin':
+        return str(sin(radians(float(expr[3:]))))
     else:
-        return calc([math.sin(rad_to_degree)])
+        return str(cos(radians(float(expr[3:]))))
 
 
 # Working with a file

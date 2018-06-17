@@ -27,4 +27,4 @@ def test_result_trigonometry():
 
 
 def test_result_wrong_symbol():
-    assert calc_1.check('1+2+3gv') == 'Wrong input!!! You may use only 1234567890.()+-*/ symbols! Try again!'
+    assert calc_1.check('1+2+3gv') == 'Wrong input!!! You may use only 1 2 3 4 5 6 7 8 9 0 . ( ) + - * / cos sin symbols! Try again!'
